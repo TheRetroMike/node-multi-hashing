@@ -397,8 +397,9 @@ DECLARE_FUNC(tribus) {
 
     char * input = Buffer::Data(target);
     char output[32];
-
-    tribus_hash(input, output);
+    uint32_t input_len = Buffer::Length(target);
+    
+    tribus_hash(input, output, input_len);
 
     SET_BUFFER_RETURN(output, 32);
 }
