@@ -106,7 +106,7 @@ using namespace v8;
  DECLARE_CALLBACK(x16r, x16r_hash, 32);
  DECLARE_CALLBACK(x16rv2, x16rv2_hash, 32);
  DECLARE_CALLBACK(yescrypt, yescrypt_hash, 32);
- DECLARE_CALLBACK(tribus, tribus_hash, 32);
+ DECLARE_CALLBACK(tribus, tribus_hash);
 
 DECLARE_FUNC(argon2d) {
     if (info.Length() < 4)
