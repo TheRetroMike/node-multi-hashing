@@ -37,6 +37,7 @@ extern "C" {
     #include "neoscrypt.h"
     #include "crypto/argon2/argon2.h"
     #include "crypto/yescrypt/yescrypt.h"
+    #include "tribus.h"
 }
 
 #include "boolberry.h"
@@ -105,6 +106,7 @@ using namespace v8;
  DECLARE_CALLBACK(x16r, x16r_hash, 32);
  DECLARE_CALLBACK(x16rv2, x16rv2_hash, 32);
  DECLARE_CALLBACK(yescrypt, yescrypt_hash, 32);
+ DECLARE_CALLBACK(tribus, tribus_hash, 32);
 
 DECLARE_FUNC(argon2d) {
     if (info.Length() < 4)
@@ -384,6 +386,26 @@ DECLARE_FUNC(boolberry) {
     SET_BUFFER_RETURN(output, 32);
 }
 
+DECLARE_FUNC(tribus) {    
+    if (info.Length() < 1)
+        RETURN_EXCEPT("You must provide one argument.");
+
+    Local<Object> target = Nan::To<Object>(info[0]).ToLocalChecked();
+
+    if(!Buffer::HasInstance(target))
+        RETURN_EXCEPT("Argument should be a buffer object.");
+
+    char * input = Buffer::Data(target);
+    char output[32];
+
+    uint32_t input_len = Buffer::Length(target);
+    uint64_t spad_len = Buffer::Length(target_spad);
+
+    tribus_hash(input, output);
+
+    SET_BUFFER_RETURN(output, 32);
+}
+
 NAN_MODULE_INIT(init) {
     NAN_EXPORT(target, argon2d);
     NAN_EXPORT(target, argon2i);
@@ -422,6 +444,7 @@ NAN_MODULE_INIT(init) {
     NAN_EXPORT(target, x16rv2);
     NAN_EXPORT(target, neoscrypt);
     NAN_EXPORT(target, yescrypt);
+    NAN_EXPORT(target, tribus);
 }
 
 NAN_MODULE_WORKER_ENABLED(multihashing, init);
